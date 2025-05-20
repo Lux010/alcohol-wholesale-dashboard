@@ -1,0 +1,31 @@
+version: "3.8"
+services:
+  inventory-service:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/alcohol-inventory
+      - PORT=3000
+      - JWT_SECRET=your_secret_key
+      - NODE_ENV=development
+      - DEBUG=express:*
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    stdin_open: true
+    tty: true
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:6.0
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
