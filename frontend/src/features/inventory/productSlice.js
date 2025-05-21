@@ -1,12 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import InventoryService from "../../services/inventory.service";
+import ProductService from "../../services/product.service";
 
-// Async thunks
-export const loadInventory = createAsyncThunk(
-  "inventory/load",
+export const getAllProducts = createAsyncThunk(
+  "products/getAll",
   async (_, thunkAPI) => {
     try {
-      return await InventoryService.fetchInventory();
+      return await ProductService.getAllProducts();
     } catch (err) {
       return thunkAPI.rejectWithValue(
         err.response?.data?.message || err.message
@@ -16,10 +15,10 @@ export const loadInventory = createAsyncThunk(
 );
 
 export const createProductThunk = createAsyncThunk(
-  "inventory/create",
+  "products/create",
   async (product, thunkAPI) => {
     try {
-      return await InventoryService.createProduct(product);
+      return await ProductService.createProduct(product);
     } catch (err) {
       return thunkAPI.rejectWithValue(
         err.response?.data?.message || err.message
@@ -28,8 +27,8 @@ export const createProductThunk = createAsyncThunk(
   }
 );
 
-const inventorySlice = createSlice({
-  name: "inventory",
+const productSlice = createSlice({
+  name: "products",
   initialState: {
     items: [],
     status: "idle",
@@ -38,21 +37,21 @@ const inventorySlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(loadInventory.pending, (state) => {
+      .addCase(getAllProducts.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(loadInventory.fulfilled, (state, action) => {
+      .addCase(getAllProducts.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.items = action.payload;
       })
-      .addCase(loadInventory.rejected, (state, action) => {
+      .addCase(getAllProducts.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       })
       .addCase(createProductThunk.fulfilled, (state, action) => {
-        state.items.push(action.payload);
+        state.items.unshift(action.payload); // add the new item to the top
       });
   },
 });
 
-export default inventorySlice.reducer;
+export default productSlice.reducer;

@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import InventoryTable from "../components/InventoryTable";
 import {
   createProductThunk,
-  loadInventory,
-} from "../features/inventory/inventorySlice";
+  getAllProducts,
+} from "../features/inventory/productSlice";
+import ProductsTable from "../components/ProductsTable";
 
 const Inventory = () => {
   const dispatch = useDispatch();
-  const inventoryItems = useSelector((state) => state.inventory.items);
+  const products = useSelector((state) => state.inventory.items);
   const inventoryStatus = useSelector((state) => state.inventory.status);
 
   const [showModal, setShowModal] = useState(false);
@@ -22,7 +22,7 @@ const Inventory = () => {
 
   useEffect(() => {
     if (inventoryStatus === "idle") {
-      dispatch(loadInventory());
+      dispatch(getAllProducts());
     }
   }, [dispatch, inventoryStatus]);
 
@@ -61,7 +61,7 @@ const Inventory = () => {
         </button>
       </div>
 
-      <InventoryTable inventory={inventoryItems} />
+      <ProductsTable products={products.data} />
 
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">

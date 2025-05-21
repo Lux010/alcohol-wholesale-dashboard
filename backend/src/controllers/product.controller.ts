@@ -11,6 +11,9 @@ class ProductController {
   ): Promise<void> {
     try {
       const products = await ProductServices.getAllProducts();
+      console.log("====================================");
+      console.log(products);
+      console.log("====================================");
       res.status(200).json({ data: products, message: "findAll" });
     } catch (error) {
       next(error);

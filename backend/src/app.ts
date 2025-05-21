@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use("/api/products", productsRoutes);
+app.use("/api", productsRoutes);
 
 // Error handling middleware
 app.use(errorHandler);
