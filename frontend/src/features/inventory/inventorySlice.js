@@ -1,32 +1,41 @@
-// src/features/inventory/inventorySlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { fetchInventory } from "./inventoryAPI"; // Your API service
+import InventoryService from "../../services/inventory.service";
 
+// Async thunks
 export const loadInventory = createAsyncThunk(
   "inventory/load",
-  async () => await fetchInventory()
+  async (_, thunkAPI) => {
+    try {
+      return await InventoryService.fetchInventory();
+    } catch (err) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || err.message
+      );
+    }
+  }
 );
 
-const initialState = {
-  items: [],
-  status: "idle",
-  error: null,
-};
+export const createProductThunk = createAsyncThunk(
+  "inventory/create",
+  async (product, thunkAPI) => {
+    try {
+      return await InventoryService.createProduct(product);
+    } catch (err) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || err.message
+      );
+    }
+  }
+);
 
 const inventorySlice = createSlice({
   name: "inventory",
-  initialState,
-  reducers: {
-    addItem: (state, action) => {
-      state.items.push(action.payload);
-    },
-    updateItem: (state, action) => {
-      const index = state.items.findIndex(
-        (item) => item.id === action.payload.id
-      );
-      if (index !== -1) state.items[index] = action.payload;
-    },
+  initialState: {
+    items: [],
+    status: "idle",
+    error: null,
   },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(loadInventory.pending, (state) => {
@@ -38,10 +47,12 @@ const inventorySlice = createSlice({
       })
       .addCase(loadInventory.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.error.message;
+        state.error = action.payload;
+      })
+      .addCase(createProductThunk.fulfilled, (state, action) => {
+        state.items.push(action.payload);
       });
   },
 });
 
-export const { addItem, updateItem } = inventorySlice.actions;
 export default inventorySlice.reducer;

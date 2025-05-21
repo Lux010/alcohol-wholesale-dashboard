@@ -1,18 +1,18 @@
 import axios from "axios";
 
-const API_URL = "/api/inventory/";
+const API_URL = "/api/products";
 
-const getInventoryByName = (name) => {
-  return axios.get(API_URL + name);
+const fetchInventory = () => {
+  return axios.get(API_URL);
 };
 
-const getInventoryByCategory = (category) => {
-  return axios.get(API_URL + category);
+const createProduct = () => {
+  return axios.get(API_URL);
 };
 
 const InventoryService = {
-  getInventoryByName,
-  getInventoryByCategory,
+  fetchInventory,
+  createProduct,
 };
 
 export default InventoryService;
