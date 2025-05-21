@@ -1,5 +1,5 @@
-// src/controllers/inventoryController.js
-import Alcohol from "../models/Alcohol.js";
+// src/controllers/inventoryController.ts
+import Alcohol from "../models/Alcohol.ts";
 
 export const getInventory = async (req, res) => {
   const items = await Alcohol.find();

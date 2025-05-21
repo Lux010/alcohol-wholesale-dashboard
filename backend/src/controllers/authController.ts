@@ -1,6 +1,6 @@
 // src/controllers/authController.js
 import jwt from "jsonwebtoken";
-import User from "../models/User.js";
+import User from "../models/User.ts";
 
 export const register = async (req, res) => {
   const { email, password, role } = req.body;
