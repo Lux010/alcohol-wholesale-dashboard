@@ -7,7 +7,7 @@ const fetchInventory = () => {
 };
 
 const createProduct = () => {
-  return axios.get(API_URL);
+  return axios.post(API_URL);
 };
 
 const InventoryService = {
