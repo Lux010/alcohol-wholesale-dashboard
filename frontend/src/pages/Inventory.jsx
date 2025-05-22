@@ -1,24 +1,54 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useAlert } from "../contexts/AlertContext";
+// import { useConfirmation } from "../contexts/ConfirmationContext";
 import {
   createProductThunk,
   getAllProducts,
 } from "../features/inventory/productSlice";
 import ProductsTable from "../components/ProductsTable";
+import AddProductModal from "../components/AddProductModal";
 
 const Inventory = () => {
+  const { showAlert } = useAlert();
+  // const { showConfirmation } = useConfirmation();
+
   const dispatch = useDispatch();
   const products = useSelector((state) => state.inventory.items);
   const inventoryStatus = useSelector((state) => state.inventory.status);
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("All");
+
+  const [statusFilter, setStatusFilter] = useState("All");
+  const [abvMin, setAbvMin] = useState("");
+  const [abvMax, setAbvMax] = useState("");
+
   const [showModal, setShowModal] = useState(false);
   const [newItem, setNewItem] = useState({
     name: "",
+    brand: "",
     category: "Spirits",
-    stock: 0,
-    price: 0,
+    abv: "",
+    quantity: "",
+    price: "",
+    status: "In Stock",
+    emoji: "🍾",
     supplierId: "",
   });
+
+  const filteredProducts = products.data
+    ?.filter((item) =>
+      item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .filter((item) =>
+      categoryFilter === "All" ? true : item.category === categoryFilter
+    )
+    .filter((item) =>
+      statusFilter === "All" ? true : item.status === statusFilter
+    )
+    .filter((item) => (abvMin !== "" ? item.abv >= parseFloat(abvMin) : true))
+    .filter((item) => (abvMax !== "" ? item.abv <= parseFloat(abvMax) : true));
 
   useEffect(() => {
     if (inventoryStatus === "idle") {
@@ -26,26 +56,27 @@ const Inventory = () => {
     }
   }, [dispatch, inventoryStatus]);
 
-  const handleChange = (field, value) => {
-    setNewItem((prev) => ({ ...prev, [field]: value }));
-  };
-
   const handleSubmit = () => {
     dispatch(createProductThunk({ ...newItem }))
       .unwrap()
       .then(() => {
         setNewItem({
           name: "",
+          brand: "",
           category: "Spirits",
-          stock: 0,
+          abv: 0,
+          quantity: 0,
           price: 0,
+          status: "In Stock",
+          emoji: "🍾",
           supplierId: "",
         });
+
         setShowModal(false);
       })
       .catch((err) => {
         console.error(err);
-        alert("Failed to add item.");
+        showAlert(`${404}: Failed to add item.`, "error");
       });
   };
 
@@ -61,85 +92,83 @@ const Inventory = () => {
         </button>
       </div>
 
+      <div className="flex flex-wrap gap-4 mb-4">
+        <input
+          type="text"
+          placeholder="Search by name..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="border px-3 py-2 rounded-md w-full md:w-48"
+        />
+
+        <select
+          value={categoryFilter}
+          onChange={(e) => setCategoryFilter(e.target.value)}
+          className="border px-3 py-2 rounded-md w-full md:w-48"
+        >
+          <option value="All">All Categories</option>
+          <option value="Whiskey">Whiskey</option>
+          <option value="Wine">Wine</option>
+          <option value="Beer">Beer</option>
+          <option value="Champagne">Champagne</option>
+          <option value="Vodka">Vodka</option>
+          <option value="Gin">Gin</option>
+          <option value="Rum">Rum</option>
+          <option value="Cider">Cider</option>
+        </select>
+
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="border px-3 py-2 rounded-md w-full md:w-48"
+        >
+          <option value="All">All Statuses</option>
+          <option value="In Stock">In Stock</option>
+          <option value="Low Stock">Low Stock</option>
+          <option value="Out of Stock">Out of Stock</option>
+        </select>
+
+        <input
+          type="number"
+          placeholder="Min ABV"
+          value={abvMin}
+          onChange={(e) => setAbvMin(e.target.value)}
+          className="border px-3 py-2 rounded-md w-full md:w-24"
+        />
+        <input
+          type="number"
+          placeholder="Max ABV"
+          value={abvMax}
+          onChange={(e) => setAbvMax(e.target.value)}
+          className="border px-3 py-2 rounded-md w-full md:w-24"
+        />
+
+        <button
+          onClick={() => {
+            setSearchTerm("");
+            setCategoryFilter("All");
+            setStatusFilter("All");
+            setAbvMin("");
+            setAbvMax("");
+          }}
+          className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md text-sm"
+        >
+          Clear Filters
+        </button>
+      </div>
+
       {products.data !== undefined && (
-        <ProductsTable products={products.data} />
+        <ProductsTable products={filteredProducts} />
       )}
 
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-lg w-full max-w-lg">
-            <div className="p-4 border-b flex justify-between items-center">
-              <h3 className="text-lg font-medium">Add New Inventory Item</h3>
-              <button
-                onClick={() => setShowModal(false)}
-                className="text-gray-400 hover:text-gray-500"
-              >
-                ✕
-              </button>
-            </div>
-
-            <div className="p-4 space-y-4">
-              <input
-                type="text"
-                placeholder="Product Name"
-                value={newItem.name}
-                onChange={(e) => handleChange("name", e.target.value)}
-                className="w-full border rounded-md p-2"
-              />
-              <select
-                value={newItem.category}
-                onChange={(e) => handleChange("category", e.target.value)}
-                className="w-full border rounded-md p-2"
-              >
-                <option value="Spirits">Spirits</option>
-                <option value="Wine">Wine</option>
-                <option value="Beer">Beer</option>
-              </select>
-              <input
-                type="number"
-                placeholder="Stock"
-                value={newItem.stock}
-                onChange={(e) =>
-                  handleChange("stock", parseInt(e.target.value))
-                }
-                className="w-full border rounded-md p-2"
-              />
-              <input
-                type="number"
-                step="0.01"
-                placeholder="Price"
-                value={newItem.price}
-                onChange={(e) =>
-                  handleChange("price", parseFloat(e.target.value))
-                }
-                className="w-full border rounded-md p-2"
-              />
-              <input
-                type="number"
-                placeholder="Supplier ID"
-                value={newItem.supplierId}
-                onChange={(e) => handleChange("supplierId", e.target.value)}
-                className="w-full border rounded-md p-2"
-              />
-            </div>
-
-            <div className="p-4 border-t flex justify-end space-x-3">
-              <button
-                onClick={() => setShowModal(false)}
-                className="px-4 py-2 bg-gray-200 rounded-md"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSubmit}
-                disabled={!newItem.name || newItem.price <= 0}
-                className="px-4 py-2 bg-green-500 text-white rounded-md"
-              >
-                Add Item
-              </button>
-            </div>
-          </div>
-        </div>
+        <AddProductModal
+          isOpen={showModal}
+          onClose={() => setShowModal(false)}
+          onSubmit={handleSubmit}
+          product={newItem}
+          onChange={(updated) => setNewItem(updated)}
+        />
       )}
     </div>
   );

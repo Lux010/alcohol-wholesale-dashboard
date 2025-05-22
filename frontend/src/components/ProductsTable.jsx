@@ -2,9 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const ProductsTable = ({ products }) => {
-  console.log("====================================");
-  console.log(products);
-  console.log("====================================");
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full divide-y divide-gray-200">
