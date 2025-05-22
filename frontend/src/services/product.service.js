@@ -21,7 +21,7 @@ const updateProduct = (id) => {
 };
 
 const createProduct = (product) => {
-  return axios.post(API_URL + product).then((response) => {
+  return axios.post(API_URL, product).then((response) => {
     return response.data;
   });
 };

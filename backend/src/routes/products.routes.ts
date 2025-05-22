@@ -4,7 +4,7 @@ import ProductController from "../controllers/product.controller";
 const router = Router();
 
 // Using the combined middleware
-router.post("/", ProductController.createProduct);
+router.post("/products", ProductController.createProduct);
 router.put("/:id", ProductController.updateProduct);
 
 // Routes without validation

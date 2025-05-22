@@ -70,7 +70,7 @@ const InventoryItem = () => {
 
             <div>
               <h4 className="font-medium text-gray-700">Price</h4>
-              <p>${item.price.toFixed(2)}</p>
+              <p>${item.cost_price.toFixed(2)}</p>
             </div>
           </div>
         </div>

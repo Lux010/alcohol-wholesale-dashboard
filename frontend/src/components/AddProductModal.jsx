@@ -80,8 +80,10 @@ const AddProductModal = ({ isOpen, onClose, onSubmit, product, onChange }) => {
             type="number"
             step="0.01"
             placeholder="Price"
-            value={product.price}
-            onChange={(e) => handleChange("price", parseFloat(e.target.value))}
+            value={product.cost_price}
+            onChange={(e) =>
+              handleChange("cost_price", parseFloat(e.target.value))
+            }
             className="w-full border rounded-md p-2"
           />
           <select
@@ -103,8 +105,8 @@ const AddProductModal = ({ isOpen, onClose, onSubmit, product, onChange }) => {
           <input
             type="number"
             placeholder="Supplier ID"
-            value={product.supplierId}
-            onChange={(e) => handleChange("supplierId", e.target.value)}
+            value={product.supplier_id}
+            onChange={(e) => handleChange("supplier_id", e.target.value)}
             className="w-full border rounded-md p-2"
           />
         </div>
@@ -118,7 +120,7 @@ const AddProductModal = ({ isOpen, onClose, onSubmit, product, onChange }) => {
           </button>
           <button
             onClick={onSubmit}
-            disabled={!product.name || product.price <= 0}
+            disabled={!product.name || product.cost_price <= 0}
             className="px-4 py-2 bg-green-500 text-white rounded-md"
           >
             Add Item

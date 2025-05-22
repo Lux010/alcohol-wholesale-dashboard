@@ -11,9 +11,6 @@ class ProductController {
   ): Promise<void> {
     try {
       const products = await ProductServices.getAllProducts();
-      console.log("====================================");
-      console.log(products);
-      console.log("====================================");
       res.status(200).json({ data: products, message: "findAll" });
     } catch (error) {
       next(error);
@@ -40,7 +37,11 @@ class ProductController {
     next: NextFunction
   ): Promise<void> {
     try {
+      console.log("====================================");
+      console.log("BACKEND CREATION");
       const productData: Product = req.body;
+      console.log(productData);
+      console.log("====================================");
       const createdProductId = await ProductServices.createProduct(productData);
       res.status(201).json({ data: createdProductId, message: "created" });
     } catch (error) {
