@@ -61,7 +61,9 @@ const Inventory = () => {
         </button>
       </div>
 
-      <ProductsTable products={products.data} />
+      {products.data !== undefined && (
+        <ProductsTable products={products.data} />
+      )}
 
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">

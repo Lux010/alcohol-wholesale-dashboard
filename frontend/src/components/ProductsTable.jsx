@@ -20,10 +20,10 @@ const ProductsTable = ({ products }) => {
               ABV
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Quantity
+              Price
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Price
+              Quantity
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Status
@@ -55,6 +55,9 @@ const ProductsTable = ({ products }) => {
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {item.abv}%
               </td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                R{item.cost_price}
+              </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <span
                   className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
@@ -66,9 +69,6 @@ const ProductsTable = ({ products }) => {
                 >
                   {item.quantity} {item.quantity === 1 ? "bottle" : "bottles"}
                 </span>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                R{item.cost_price}
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <span
